@@ -253,6 +253,7 @@ class KnowledgeNeurons:
         percentile: float = None,
         attribution_method: str = "integrated_grads",
         pbar: bool = True,
+        use_normgradp: Optional[bool] = False,
     ) -> List[List[int]]:
         """
         Finds the 'coarse' neurons for a given prompt and ground truth.
@@ -283,6 +284,7 @@ class KnowledgeNeurons:
             steps=steps,
             pbar=pbar,
             attribution_method=attribution_method,
+            use_normgradp=use_normgradp,
         )
         assert (
             sum(e is not None for e in [threshold, adaptive_threshold, percentile]) == 1
@@ -310,6 +312,7 @@ class KnowledgeNeurons:
         coarse_adaptive_threshold: Optional[float] = 0.3,
         coarse_threshold: Optional[float] = None,
         coarse_percentile: Optional[float] = None,
+        coarse_use_normgradp: Optional[bool] = False,
         quiet=False,
     ) -> List[List[int]]:
         """
@@ -358,6 +361,7 @@ class KnowledgeNeurons:
                     threshold=coarse_threshold,
                     percentile=coarse_percentile,
                     pbar=False,
+                    use_normgradp=coarse_use_normgradp,
                 )
             )
         if negative_examples is not None:
@@ -413,6 +417,7 @@ class KnowledgeNeurons:
         steps: int = 20,
         encoded_input: Optional[int] = None,
         attribution_method: str = "integrated_grads",
+        use_normgradp: bool = False,
     ):
         """
         get the attribution scores for a given layer
@@ -537,9 +542,15 @@ class KnowledgeNeurons:
 
                 if n_sampling_steps > 1:
                     prompt += next_token_str
-            integrated_grads = torch.stack(integrated_grads, dim=0).sum(dim=0) / len(
-                integrated_grads
-            )
+            if use_normgradp:
+                integrated_grads = torch.maximum(torch.stack(integrated_grads, dim=0), torch.tensor(0))
+                integrated_grads = torch.pow(integrated_grads, 2).sum(dim=0) / len(
+                    integrated_grads
+                )
+            else:
+                integrated_grads = torch.stack(integrated_grads, dim=0).sum(dim=0) / len(
+                    integrated_grads
+                )
             return integrated_grads
         elif attribution_method == "max_activations":
             activations = []
