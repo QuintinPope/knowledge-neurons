@@ -93,7 +93,7 @@ class KnowledgeNeurons:
             prompt, ground_truth
         )
         # for autoregressive models, we might want to generate > 1 token
-        if "gpt" in self.model_type::
+        if "gpt" in self.model_type:
             n_sampling_steps = len(target_label)
         else:
             n_sampling_steps = 1  # TODO: we might want to use multiple mask tokens even with bert models
@@ -445,7 +445,7 @@ class KnowledgeNeurons:
         )
 
         # for autoregressive models, we might want to generate > 1 token
-        if "gpt" in self.model_type::
+        if "gpt" in self.model_type:
             n_sampling_steps = len(target_label)
         else:
             n_sampling_steps = 1  # TODO: we might want to use multiple mask tokens even with bert models
@@ -454,7 +454,7 @@ class KnowledgeNeurons:
             integrated_grads = []
 
             for i in range(n_sampling_steps):
-                if i > 0 and "gpt" in self.model_type::
+                if i > 0 and "gpt" in self.model_type:
                     # retokenize new inputs
                     encoded_input, mask_idx, target_label = self._prepare_inputs(
                         prompt, ground_truth
@@ -555,7 +555,7 @@ class KnowledgeNeurons:
         elif attribution_method == "max_activations":
             activations = []
             for i in range(n_sampling_steps):
-                if i > 0 and "gpt" in self.model_type::
+                if i > 0 and "gpt" in self.model_type:
                     # retokenize new inputs
                     encoded_input, mask_idx, target_label = self._prepare_inputs(
                         prompt, ground_truth
