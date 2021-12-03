@@ -207,7 +207,7 @@ class KnowledgeNeurons:
         batch_size: int = 10,
         steps: int = 20,
         attribution_method: str = "integrated_grads",
-        normgradp: bool = False,
+        use_normgradp: bool = False,
         pbar: bool = True,
     ):
         """
@@ -239,7 +239,7 @@ class KnowledgeNeurons:
                 batch_size=batch_size,
                 steps=steps,
                 attribution_method=attribution_method,
-                normgradp=normgradp,
+                use_normgradp=use_normgradp,
             )
             scores.append(layer_scores)
         return torch.stack(scores)
