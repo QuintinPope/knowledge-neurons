@@ -108,6 +108,7 @@ class Patch(torch.nn.Module):
         target_positions: List[List[int]] = None,
         mode: str = "replace",
         enhance_value: float = 2.0,
+        enhance_bias: float = 0.0,
     ):
         super().__init__()
         self.ff = ff_layer
@@ -115,6 +116,7 @@ class Patch(torch.nn.Module):
         self.mask_idx = mask_idx
         self.target_positions = target_positions
         self.enhance_value = enhance_value
+        self.enhance_bias = enhance_bias
         assert mode in ["replace", "suppress", "enhance"]
         self.mode = mode
         if self.mode == "replace":
@@ -132,6 +134,7 @@ class Patch(torch.nn.Module):
         elif self.mode == "enhance":
             for pos in self.target_positions:
                 x[:, self.mask_idx, pos] *= self.enhance_value
+                x[:, self.mask_idx, pos] += self.enhance_bias
         else:
             raise NotImplementedError
         return x
@@ -146,6 +149,8 @@ def patch_ff_layer(
     transformer_layers_attr: str = "bert.encoder.layer",
     ff_attrs: str = "intermediate",
     neurons: List[List[int]] = None,
+    enhance_value: float = 2.0,
+    enhance_bias: float = 0.0,
 ):
     """
     replaces the ff layer at `layer_idx` with a `Patch` class - that will replace the intermediate activations at sequence position
@@ -202,6 +207,8 @@ def patch_ff_layer(
                     replacement_activations=None,
                     mode=mode,
                     target_positions=positions,
+                    enhance_value=enhance_value,
+                    enhance_bias=enhance_bias,
                 ),
             )
     else:
