@@ -351,7 +351,7 @@ class KnowledgeNeurons:
         ), "Must provide a list of different prompts to get refined neurons"
         assert 0.0 <= p < 1.0, "p should be a float between 0 and 1"
         if not ground_truths_list is None:
-            assert len(ground_truths_list) == p < len(prompts), "ground_truths_list should have length equal to prompts"
+            assert len(ground_truths_list) == len(prompts), "ground_truths_list should have length equal to prompts"
             assert ground_truth is None, "can only provide one of ground_truth or ground_truths_list"
 
         n_prompts = len(prompts)
