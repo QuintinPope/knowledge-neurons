@@ -306,7 +306,8 @@ class KnowledgeNeurons:
     def get_refined_neurons(
         self,
         prompts: List[str],
-        ground_truth: str,
+        ground_truth: Optional[str] = None,
+        ground_truths_list: Optional[List[str]] = None,
         negative_examples: Optional[List[str]] = None,
         p: float = 0.5,
         batch_size: int = 10,
@@ -330,6 +331,8 @@ class KnowledgeNeurons:
             the prompts to get the refined neurons for
         `ground_truth`: str
             the ground truth / expected output
+        `ground_truths_list`: list of str whose shape matches `prompts`
+            lets you set a different ground truth / expected output for each prompt
         `negative_examples`: list of str
             Optionally provide a list of negative examples. Any neuron that appears in these examples will be excluded from the final results.
         `p`: float
@@ -347,16 +350,27 @@ class KnowledgeNeurons:
             prompts, list
         ), "Must provide a list of different prompts to get refined neurons"
         assert 0.0 <= p < 1.0, "p should be a float between 0 and 1"
+        if not ground_truths_list is None:
+            assert len(ground_truths_list) == p < len(prompts), "ground_truths_list should have length equal to prompts"
+            assert ground_truth is None, "can only provide one of ground_truth or ground_truths_list"
 
         n_prompts = len(prompts)
         coarse_neurons = []
+        i = 0
         for prompt in tqdm(
             prompts, desc="Getting coarse neurons for each prompt...", disable=quiet
         ):
+            if not ground_truth is None:
+                current_ground_truth = ground_truth
+            elif not ground_truths_list is None:
+                current_ground_truth = ground_truths_list[i]
+                i = i + 1
+            else:
+                print("Must provide either a single ground truth or a list of ground truths")
             coarse_neurons.append(
                 self.get_coarse_neurons(
                     prompt,
-                    ground_truth,
+                    current_ground_truth,
                     batch_size=batch_size,
                     steps=steps,
                     adaptive_threshold=coarse_adaptive_threshold,
