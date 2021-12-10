@@ -602,6 +602,8 @@ class KnowledgeNeurons:
         mode: str = "suppress",
         undo_modification: bool = True,
         quiet: bool = False,
+        enhance_value: float = 2.0,
+        enhance_bias: float = 0.0,
     ) -> Tuple[dict, Callable]:
         results_dict = {}
         _, mask_idx, _ = self._prepare_inputs(
@@ -635,6 +637,8 @@ class KnowledgeNeurons:
             neurons=neurons,
             transformer_layers_attr=self.transformer_layers_attr,
             ff_attrs=self.input_ff_attr,
+            enhance_value=enhance_value,
+            enhance_bias=enhance_bias,
         )
 
         # get the probabilities of the groundtruth being generated + the argmax / greedy completion after modifying the activations
@@ -693,6 +697,8 @@ class KnowledgeNeurons:
         neurons: List[List[int]],
         undo_modification: bool = True,
         quiet: bool = False,
+        enhance_value: float = 2.0,
+        enhance_bias: float = 0.0,
     ) -> Tuple[dict, Callable]:
         """
         prompt the model with `prompt`, multiplying the activations at the positions
@@ -705,6 +711,8 @@ class KnowledgeNeurons:
             mode="enhance",
             undo_modification=undo_modification,
             quiet=quiet,
+            enhance_value=enhance_value
+            enhance_bias=enhance_bias
         )
 
     @torch.no_grad()
