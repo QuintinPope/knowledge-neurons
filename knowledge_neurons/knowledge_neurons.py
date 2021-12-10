@@ -711,8 +711,8 @@ class KnowledgeNeurons:
             mode="enhance",
             undo_modification=undo_modification,
             quiet=quiet,
-            enhance_value=enhance_value
-            enhance_bias=enhance_bias
+            enhance_value=enhance_value,
+            enhance_bias=enhance_bias,
         )
 
     @torch.no_grad()
