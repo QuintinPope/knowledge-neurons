@@ -8,7 +8,7 @@ from transformers import (
 from .knowledge_neurons import KnowledgeNeurons
 from .data import pararel, pararel_expanded, PARAREL_RELATION_NAMES
 
-BERT_MODELS = ["bert-base-uncased", "bert-base-multilingual-uncased"]
+BERT_MODELS = ["bert-base-uncased", "bert-base-multilingual-uncased", "bert-large-uncased"]
 GPT2_MODELS = ["gpt2"]
 GPT_NEO_MODELS = [
     "EleutherAI/gpt-neo-125M",
