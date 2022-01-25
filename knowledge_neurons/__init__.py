@@ -29,7 +29,15 @@ def initialize_model_and_tokenizer(model_name: str):
         tokenizer = GPT2Tokenizer.from_pretrained(model_name)
         model = GPTNeoForCausalLM.from_pretrained(model_name)
     else:
-        raise ValueError("Model {model_name} not supported")
+        print("Attempting to model load from file")
+        model = torch.load(model_name)
+        if "bert" in model_name:
+            tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
+        elif "gpt" in model_name:
+            tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+        else:
+            raise ValueError("Model {model_name} must contain a supported model type as a substring")
+        #raise ValueError("Model {model_name} not supported")
 
     model.eval()
 
