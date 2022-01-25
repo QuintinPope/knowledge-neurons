@@ -30,6 +30,12 @@ if __name__ == "__main__":
         default="bert-base-uncased",
         help=f"name of the LM to use - choose from {ALL_MODELS}",
     )
+    parser.add_argument(
+        "--model_path",
+        type=str,
+        default="none",
+        help=f"path to load model from if not using default pretrained checkpoints",
+    )
     parser.add_argument("--results_dir", type=str, default='bert_base_uncased_neurons', help='directory in which to save results')
     parser.add_argument("--batch_size", type=int, default=20)
     parser.add_argument(
@@ -74,7 +80,10 @@ if __name__ == "__main__":
     NEURONS = {}
 
     # setup model + tokenizer
-    model, tokenizer = initialize_model_and_tokenizer(args.model_name)
+    if args.model_path == 'none':
+        model, tokenizer = initialize_model_and_tokenizer(args.model_name)
+    else:
+        model, tokenizer = initialize_model_and_tokenizer(args.model_path)
     kn = KnowledgeNeurons(model, tokenizer, model_type=model_type(args.model_name))
 
     # because we may end up getting some neurons multiple times, use lru cache to save time
